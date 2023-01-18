@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="example">
+  <xacro:arg name="gpu" default="false"/>
+  <xacro:property name="gpu" value="$(arg gpu)" />
+  <xacro:arg name="organize_cloud" default="false"/>
+  <xacro:property name="organize_cloud" value="$(arg organize_cloud)" />
+  <xacro:property name="M_PI" value="3.1415926535897931" />
+
+  <!-- Base Footprint -->
+  <link name="base_footprint" />
+
+  <!-- Base Link -->
+  <joint name="footprint" type="fixed" >
+   <parent link="base_footprint" />
+    <child link="truck_base" />
+    <origin xyz="0 0 0.0" rpy="0 0 0" />
+  </joint>
+  <link name="truck_base" >
+    <visual>
+      <geometry>
+        <mesh filename = "file:///home/kyungki/model/mixer+truck/model/model.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename = "file:///home/kyungki/model/mixer+truck/model/model.dae"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0"/>
+      <mass value="10"/>
+      <inertia ixx="3.0" ixy="0.0" ixz="0.0"
+               iyy="3.0" iyz="0.0" 
+               izz="3.0" />
+    </inertial>
+  </link>
+
+  <!-- Including and positioning the sensors -->
+  
+  <xacro:include filename="$(find velodyne_description)/urdf/HDL-32E.urdf.xacro"/>
+  <xacro:include filename="$(find velodyne_description)/urdf/astra.urdf.xacro"/>
+
+  <xacro:sensor_astra parent="truck_base" name="Front_Astra">
+    <origin xyz="0 -1.8 1.7" rpy="0 ${M_PI/18} ${-M_PI/2}"/>
+  </xacro:sensor_astra>
+  <xacro:sensor_astra parent="truck_base" name="Back_Astra">
+    <origin xyz="0 4.9 1.7" rpy="0 ${M_PI/18} ${M_PI/2}"/>
+  </xacro:sensor_astra>
+
+  <xacro:sensor_astra parent="truck_base" name="Left_Forward_Astra">
+    <origin xyz="1.2 -0.15 1.7" rpy="0 ${M_PI/18} 0"/>
+  </xacro:sensor_astra>
+  <xacro:sensor_astra parent="truck_base" name="Left_Backward_Astra">
+    <origin xyz="1.2 2.85 1.7" rpy="0 ${M_PI/18} 0"/>
+  </xacro:sensor_astra>
+
+  <xacro:sensor_astra parent="truck_base" name="Right_Forward_Astra">
+    <origin xyz="-1.2 -0.15 1.7" rpy="0 ${M_PI/18} ${M_PI}"/>
+  </xacro:sensor_astra>
+  <xacro:sensor_astra parent="truck_base" name="Right_Backward_Astra">
+    <origin xyz="-1.2 2.85 1.7" rpy="0 ${M_PI/18} ${M_PI}"/>
+  </xacro:sensor_astra>
+
+
+
+  <xacro:sensor_astra parent="truck_base" name="Front_Left_Astra">
+    <origin xyz="1 -1.4 1.7" rpy="0 ${M_PI/18} ${-M_PI/4}"/>
+  </xacro:sensor_astra>
+  <xacro:sensor_astra parent="truck_base" name="Front_Right_Astra">
+    <origin xyz="-1 -1.4 1.7" rpy="0 ${M_PI/18} ${-M_PI*3/4}"/>
+  </xacro:sensor_astra>
+
+  <xacro:sensor_astra parent="truck_base" name="Back_Left_Astra">
+    <origin xyz="1.2 4.3 1.7" rpy="0 ${M_PI/18} ${M_PI/4}"/>
+  </xacro:sensor_astra>
+  <xacro:sensor_astra parent="truck_base" name="Back_Right_Astra">
+    <origin xyz="-1.2 4.3 1.7" rpy="0 ${M_PI/18} ${M_PI*3/4}"/>
+  </xacro:sensor_astra>
+
+  <xacro:HDL-32E parent="truck_base" name="velodyne2" topic="/velodyne_points2" hz="10" samples="220" gpu="${gpu}">
+    <origin xyz="0 0 2.7" rpy="0 0 ${M_PI}" />
+  </xacro:HDL-32E>
+
+</robot>
